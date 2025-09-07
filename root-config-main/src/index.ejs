@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>React Microfrontends</title>
+  <meta name="importmap-type" use-injector />
+  <script type="injector-importmap" src="https://react.microfrontends.app/importmap.json"></script>
+  <% if (isLocal) { %>
+  <script type="injector-importmap">
+    {
+      "imports": {
+        "@react-mf/root-config": "//localhost:9000/react-mf-root-config.js",
+        "@react-mf/navbar": "https://localhost:9001/react-mf-navbar.js"
+      }
+    }
+  </script>
+  <% } %>
+  <template id="single-spa-layout">
+    <single-spa-router>
+      <nav class="topnav">
+        <application name="@react-mf/navbar" loader="topNav" error="topNav"></application>
+      </nav>
+      <div class="main-content mt-16">
+        <route path="people">
+          <application name="@react-mf/people"></application>
+        </route>
+        <route path="planets">
+          <application name="@react-mf/planets"></application>
+        </route>
+        <redirect from="/earth" to="/planets"></redirect>
+        <route default>
+          <h1 class="flex flex-row justify-center p-16">
+            <p class="max-w-md">This example project shows independently built and deployed microfrontends that use React and single-spa. Each nav link above takes you to a different microfrontend.</p>
+          </h1>
+        </route>
+      </div>
+    </single-spa-router>
+  </template>
+</head>
+<body>
+  <script src="https://react.microfrontends.app/deps/npm:import-map-overrides@6.1.0/dist/import-map-overrides.js"></script>
+  <script src="https://react.microfrontends.app/deps/npm:@single-spa/import-map-injector@3.0.0/lib/import-map-injector.js"></script>
+  <script>
+    window.importMapInjector.initPromise.then(() => {
+      import('@react-mf/root-config');
+      import('@react-mf/styleguide');
+    });
+  </script>
+  <import-map-overrides-full show-when-local-storage="devtools" dev-libs></import-map-overrides-full>
+</body>
+</html>
